@@ -32,6 +32,7 @@ module GrapeSwagger
         hide_documentation_path: true,
         format: :json,
         authorizations: nil,
+        path_versioning: true,
         security_definitions: nil,
         security: nil,
         api_documentation: { desc: 'Swagger compatible API description' },

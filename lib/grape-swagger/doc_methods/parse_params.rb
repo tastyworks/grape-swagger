@@ -76,7 +76,7 @@ module GrapeSwagger
             collection_format = value_type[:documentation][:collectionFormat]
           end
 
-          param_type ||= value_type[:param_type]
+          param_type ||= value_type[:param_type] || param_type(value_type)
 
           array_items = parse_array_item(
             definitions,
@@ -84,7 +84,7 @@ module GrapeSwagger
             value_type
           )
 
-          @parsed_param[:in] = param_type || 'formData'
+          @parsed_param[:in] = param_type || 'body'
           @parsed_param[:items] = array_items
           @parsed_param[:type] = 'array'
           @parsed_param[:collectionFormat] = collection_format if DataType.collections.include?(collection_format)
@@ -151,7 +151,7 @@ module GrapeSwagger
           elsif param_type
             param_type
           elsif %w[POST PUT PATCH].include?(value_type[:method])
-            DataType.request_primitive?(value_type[:data_type]) ? 'formData' : 'body'
+            'body'
           else
             'query'
           end

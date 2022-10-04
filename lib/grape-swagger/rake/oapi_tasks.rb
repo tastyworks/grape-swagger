@@ -121,7 +121,7 @@ module GrapeSwagger
         name = if ENV['store'] == 'true' || ENV['store'].blank?
                  "swagger_doc_#{api_version}.json"
                else
-                 ENV['store'].sub('.json', "_#{api_version}.json")
+                 ENV['store']
                end
 
         File.join(Dir.getwd, name)
