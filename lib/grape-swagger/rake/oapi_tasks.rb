@@ -3,6 +3,7 @@
 require 'rake'
 require 'rake/tasklib'
 require 'rack/test'
+require_relative 'util'
 
 module GrapeSwagger
   module Rake
@@ -46,10 +47,10 @@ module GrapeSwagger
           resource - if given only for that it would be generated (optional)'
         task fetch: :environment do
           # :nocov:
-          urls_for(api_class).each do |url|
-            make_request(url)
+          Util.swagger_doc_url_data_for(api_class).each do |url_data|
+            make_request(url_data[:path], url_data[:api_version])
 
-            save_to_file? ? File.write(file(url), @oapi) : $stdout.print(@oapi)
+            save_to_file? ? File.write(url_data[:file_path], @oapi) : $stdout.print(@oapi)
           end
 
           # :nocov:
@@ -67,15 +68,12 @@ module GrapeSwagger
           ::Rake::Task['oapi:fetch'].invoke
           exit if error?
 
-          urls_for(api_class).each do |url|
-            @output = system "swagger-cli validate #{file(url)}"
+          Util.swagger_doc_url_data_for(api_class).each do |url_data|
+            output = system "swagger-cli validate #{url_data[:file_path]}"
+            $stdout.puts 'install swagger-cli with `npm install swagger-cli -g`' if output.nil?
 
-            FileUtils.rm(
-              file(url)
-            )
+            FileUtils.rm(url_data[:file_path])
           end
-
-          $stdout.puts 'install swagger-cli with `npm install swagger-cli -g`' if @output.nil?
           # :nocov:
         end
       end
@@ -83,7 +81,8 @@ module GrapeSwagger
       # helper methods
       #
       # rubocop:disable Style/StringConcatenation
-      def make_request(url)
+      def make_request(url, version = nil)
+        header('Accept-Version', version) if version.present?
         get url
 
         @oapi = JSON.pretty_generate(
@@ -92,39 +91,12 @@ module GrapeSwagger
       end
       # rubocop:enable Style/StringConcatenation
 
-      def urls_for(api_class)
-        api_class.routes
-                 .map(&:path)
-                 .select { |e| e.include?('doc') }
-                 .reject { |e| e.include?(':name') }
-                 .map { |e| format_path(e) }
-                 .map { |e| [e, ENV.fetch('resource', nil)].join('/').chomp('/') }
-      end
-
-      def format_path(path)
-        oapi_route = api_class.routes.select { |e| e.path == path }.first
-        path = path.sub(/\(\.\w+\)$/, '').sub(/\(\.:\w+\)$/, '')
-        path.sub(':version', oapi_route.version.to_s)
-      end
-
       def save_to_file?
-        ENV['store'].present? && !error?
+        ENV.fetch('store', nil).present? && !error?
       end
 
       def error?
         JSON.parse(@oapi).keys.first == 'error'
-      end
-
-      def file(url)
-        api_version = url.split('/').last
-
-        name = if ENV['store'] == 'true' || ENV['store'].blank?
-                 "swagger_doc_#{api_version}.json"
-               else
-                 ENV['store']
-               end
-
-        File.join(Dir.getwd, name)
       end
 
       def app

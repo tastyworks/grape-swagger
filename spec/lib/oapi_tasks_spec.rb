@@ -3,30 +3,18 @@
 require 'spec_helper'
 
 RSpec.describe GrapeSwagger::Rake::OapiTasks do
-  module Api
-    class Item < Grape::API
-      version 'v1', using: :path
-
-      namespace :item do
-        get '/'
-      end
-
-      namespace :otherItem do
-        get '/'
-      end
-    end
-
-    class Base < Grape::API
-      prefix :api
-      mount Api::Item
-      add_swagger_documentation add_version: true
-    end
-  end
-
   subject { described_class.new(Api::Base) }
 
   let(:api_class) { subject.send(:api_class) }
-  let(:docs_url) { subject.send(:urls_for, api_class).first }
+  let(:docs_url_data) { GrapeSwagger::Rake::Util.swagger_doc_url_data_for(api_class).first }
+  let(:docs_url) { docs_url_data[:path] }
+  let(:resource) { nil }
+  let(:store) { nil }
+
+  before do
+    allow(ENV).to receive(:fetch).with('resource', nil).and_return(resource)
+    allow(ENV).to receive(:fetch).with('store', nil).and_return(store)
+  end
 
   describe '.new' do
     it 'accepts class name as a constant' do
@@ -59,9 +47,8 @@ RSpec.describe GrapeSwagger::Rake::OapiTasks do
       end
 
       describe 'store it' do
-        before { ENV['store'] = 'true' }
-        after { ENV.delete('store') }
-
+        let(:store) { 'true' }
+        
         it 'allows to save' do
           expect(subject.send(:save_to_file?)).to be true
         end
@@ -70,7 +57,6 @@ RSpec.describe GrapeSwagger::Rake::OapiTasks do
 
     describe 'documentation for resource' do
       before do
-        ENV['resource'] = resource
         subject.send(:make_request, docs_url)
       end
 
@@ -79,8 +65,6 @@ RSpec.describe GrapeSwagger::Rake::OapiTasks do
           subject.send(:make_request, docs_url)
         )
       end
-
-      after { ENV.delete('resource') }
 
       describe 'valid name' do
         let(:resource) { 'otherItem' }
@@ -128,35 +112,6 @@ RSpec.describe GrapeSwagger::Rake::OapiTasks do
         expect(subject).to respond_to :oapi
         expect(subject.oapi).to be_a String
         expect(subject.oapi).not_to be_empty
-      end
-    end
-  end
-
-  describe '#file' do
-    describe 'no store given' do
-      it 'returns swagger_doc.json' do
-        expect(subject.send(:file, docs_url)).to end_with 'swagger_doc.json'
-      end
-    end
-
-    describe 'store given' do
-      after { ENV.delete('store') }
-
-      describe 'boolean true' do
-        before { ENV['store'] = 'true' }
-
-        it 'returns swagger_doc.json' do
-          expect(subject.send(:file, docs_url)).to end_with 'swagger_doc.json'
-        end
-      end
-
-      describe 'name given' do
-        let(:name) { 'oapi_doc.json' }
-        before { ENV['store'] = name }
-
-        it 'returns swagger_doc.json' do
-          expect(subject.send(:file, docs_url)).to include(name.split('.')[0])
-        end
       end
     end
   end

@@ -19,7 +19,7 @@ module GrapeSwagger
           }
 
           # optional properties
-          document_description(settings)
+          document_description(settings, param, method)
           document_type_and_format(settings, data_type)
           document_array_param(value_type, definitions) if value_type[:is_array]
           document_default_value(settings) unless value_type[:is_array]
@@ -34,9 +34,17 @@ module GrapeSwagger
 
         private
 
-        def document_description(settings)
+        def document_description(settings, param, request_method)
           description = settings[:desc] || settings[:description]
+          description = add_querystring_array_example(description, param, request_method, settings)
           @parsed_param[:description] = description if description
+        end
+
+        def add_querystring_array_example(description, param, request_method, settings)
+          return description unless settings[:is_array]
+          return description unless request_method.downcase.to_sym == :get
+
+          "#{description} (example: #{param}[]={value1}&#{param}[]={value2})"
         end
 
         def document_required(settings)
