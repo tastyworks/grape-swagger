@@ -19,7 +19,7 @@ module GrapeSwagger
           }
 
           # optional properties
-          document_description(settings)
+          document_description(settings, param, method)
           document_type_and_format(settings, data_type)
           document_array_param(value_type, definitions) if value_type[:is_array]
           document_default_value(settings) unless value_type[:is_array]
@@ -34,9 +34,17 @@ module GrapeSwagger
 
         private
 
-        def document_description(settings)
+        def document_description(settings, param, request_method)
           description = settings[:desc] || settings[:description]
+          description = add_querystring_array_example(description, param, request_method, settings)
           @parsed_param[:description] = description if description
+        end
+
+        def add_querystring_array_example(description, param, request_method, settings)
+          return description unless settings[:is_array]
+          return description unless request_method.downcase.to_sym == :get
+
+          "#{description} (example: #{param}[]={value1}&#{param}[]={value2})"
         end
 
         def document_required(settings)
@@ -76,7 +84,7 @@ module GrapeSwagger
             collection_format = value_type[:documentation][:collectionFormat]
           end
 
-          param_type ||= value_type[:param_type]
+          param_type ||= value_type[:param_type] || param_type(value_type)
 
           array_items = parse_array_item(
             definitions,
@@ -84,7 +92,7 @@ module GrapeSwagger
             value_type
           )
 
-          @parsed_param[:in] = param_type || 'formData'
+          @parsed_param[:in] = param_type || 'body'
           @parsed_param[:items] = array_items
           @parsed_param[:type] = 'array'
           @parsed_param[:collectionFormat] = collection_format if DataType.collections.include?(collection_format)
@@ -151,7 +159,7 @@ module GrapeSwagger
           elsif param_type
             param_type
           elsif %w[POST PUT PATCH].include?(value_type[:method])
-            DataType.request_primitive?(value_type[:data_type]) ? 'formData' : 'body'
+            'body'
           else
             'query'
           end
