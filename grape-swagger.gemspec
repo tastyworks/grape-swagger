@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.push File.expand_path('lib', __dir__)
-require 'grape-swagger/version'
+require 'tastyworks/grape_swagger/version'
 
 Gem::Specification.new do |s|
   s.name        = 'tastyworks-grape_swagger'
-  s.version     = GrapeSwagger::VERSION
+  s.version     = Tastyworks::GrapeSwagger::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = %w(tastyworks)
   s.email       = ['developers@tastyworks.com']
