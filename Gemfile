@@ -38,8 +38,14 @@ group :test do
   gem 'simplecov', require: false
 end
 
+package_cloud_token = '40a5c0a37bf51a44a56c18adcf1d28e6ddea73dcfc257d79'
+package_cloud_url = "https://#{package_cloud_token}:@packagecloud.io/tastyworks/gems"
 group :test, :development do
   unless ENV['MODEL_PARSER'] == 'grape-swagger-entity'
     gem 'grape-swagger-entity', git: 'https://github.com/ruby-grape/grape-swagger-entity'
+  end
+
+  source package_cloud_url do
+    gem 'tastyworks-development_dependencies', '~> 2.24', '>= 2.24.1'
   end
 end
