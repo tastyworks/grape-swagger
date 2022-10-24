@@ -4,7 +4,7 @@ $LOAD_PATH.push File.expand_path('lib', __dir__)
 require 'grape-swagger/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'grape-swagger'
+  s.name        = 'tastyworks-grape_swagger'
   s.version     = GrapeSwagger::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = %w(tastyworks)
