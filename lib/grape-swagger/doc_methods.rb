@@ -99,10 +99,14 @@ module GrapeSwagger
 
       instance_eval(guard) unless guard.nil?
 
+      params do
+        optional :include_hidden, type: Grape::API::Boolean, default: false, desc: 'If true, will output hidden endpoints and params'
+      end
       get mount_path do
         header['Access-Control-Allow-Origin']   = '*'
         header['Access-Control-Request-Method'] = '*'
 
+        options = options.merge(params).with_indifferent_access
         GrapeSwagger::DocMethods
           .output_path_definitions(target_class.combined_namespace_routes, self, target_class, options)
       end
