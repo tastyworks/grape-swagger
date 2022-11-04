@@ -176,7 +176,7 @@ module Grape
 
     def params_object(route, options, path)
       parameters = build_request_params(route, options).each_with_object([]) do |(param, value), memo|
-        next if hidden_parameter?(value)
+        next if hidden_parameter?(value, options)
 
         value = { required: false }.merge(value) if value.is_a?(Hash)
         _, value = default_type([[param, value]]).first if value == ''
@@ -419,6 +419,8 @@ module Grape
     end
 
     def hidden?(route, options)
+      return false if options[:include_hidden]
+
       route_hidden = route.settings.try(:[], :swagger).try(:[], :hidden)
       route_hidden = route.options[:hidden] if route.options.key?(:hidden)
       return route_hidden unless route_hidden.is_a?(Proc)
@@ -426,7 +428,8 @@ module Grape
       options[:token_owner] ? route_hidden.call(send(options[:token_owner].to_sym)) : route_hidden.call
     end
 
-    def hidden_parameter?(value)
+    def hidden_parameter?(value, options)
+      return false if options[:include_hidden]
       return false if value[:required]
 
       if value.dig(:documentation, :hidden).is_a?(Proc)

@@ -82,8 +82,9 @@ module GrapeSwagger
       #
       # rubocop:disable Style/StringConcatenation
       def make_request(url, version = nil)
+        params = { include_hidden: ENV.fetch('include_hidden', false) }
         header('Accept-Version', version) if version.present?
-        get url
+        get url, params
 
         @oapi = JSON.pretty_generate(
           JSON.parse(last_response.body, symolize_names: true)

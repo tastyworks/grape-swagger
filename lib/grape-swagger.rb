@@ -4,7 +4,7 @@ require 'grape'
 
 require 'grape-swagger/instance'
 
-require 'grape-swagger/version'
+require 'tastyworks/grape_swagger/version'
 require 'grape-swagger/endpoint'
 require 'grape-swagger/errors'
 
