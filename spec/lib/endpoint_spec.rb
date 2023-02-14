@@ -7,6 +7,20 @@ describe Grape::Endpoint do
     described_class.new(Grape::Util::InheritableSetting.new, path: '/', method: :get)
   end
 
+  describe 'path_item' do
+    let(:default_visibility) { :public }
+    let(:options) do
+      { default_endpoint_visibility: default_visibility }
+    end
+
+    context 'when default visibility is :hidden' do
+      it 'hides all endpoints' do
+        require 'pry'
+        binding.pry
+      end
+    end
+  end
+
   describe '.content_types_for' do
     describe 'defined on target_class' do
       let(:own_json) { 'text/own-json' }
