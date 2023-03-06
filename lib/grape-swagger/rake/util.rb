@@ -4,7 +4,7 @@ module GrapeSwagger
       class << self
         def swagger_doc_url_data_for(api_class)
           api_class.routes
-                   .select { |route| route.path.include?('doc') }
+                   .select { |route| route.path.include?('swagger_doc') }
                    .reject { |route| route.path.include?(':name') }
                    .map { |route| swagger_doc_version_data(route, api_class) }
         end
