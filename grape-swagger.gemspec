@@ -14,6 +14,8 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
 
   s.metadata['rubygems_mfa_required'] = 'true'
+  s.metadata['allowed_push_host'] = 'https://rubygems.pkg.github.com/tastyworks'
+  s.metadata['github_repo'] = 'ssh://github.com/tastyworks/common-communications-client-ruby'
 
   s.required_ruby_version = '>= 2.5'
   s.add_runtime_dependency 'grape', '~> 1.3'
