@@ -10,9 +10,9 @@ module GrapeSwagger
           raw_data_type = parse_multi_type(raw_data_type)
 
           case raw_data_type.to_s
-          when 'Boolean', 'Date', 'Integer', 'String', 'Float', 'JSON', 'Array'
+          when 'Boolean', 'Date', 'Integer', 'String', 'Float', 'Array'
             raw_data_type.to_s.downcase
-          when 'Hash'
+          when 'Hash', 'JSON'
             'object'
           when 'Rack::Multipart::UploadedFile', 'File'
             'file'
