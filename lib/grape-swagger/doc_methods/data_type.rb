@@ -15,7 +15,7 @@ module GrapeSwagger
           when 'Hash', 'JSON'
             'object'
           when 'Rack::Multipart::UploadedFile', 'File'
-            'file'
+            'byte'
           when 'Grape::API::Boolean'
             'boolean'
           when 'BigDecimal'
