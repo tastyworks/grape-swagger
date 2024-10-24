@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.metadata['github_repo'] = 'ssh://github.com/tastyworks/grape-swagger'
 
   s.required_ruby_version = '>= 2.5'
-  s.add_runtime_dependency 'grape', '~> 1.3'
+  s.add_runtime_dependency 'grape', '>= 1.3', '< 3.0'
 
   s.files         = `git ls-files`.split("\n")
   s.require_paths = ['lib']
