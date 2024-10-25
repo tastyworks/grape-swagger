@@ -2,11 +2,9 @@
 
 source 'http://rubygems.org'
 
-ruby RUBY_VERSION
-
 gemspec
 
-gem 'grape', case version = ENV.fetch('GRAPE_VERSION', '~> 1.6')
+gem 'grape', case version = ENV.fetch('GRAPE_VERSION', '< 3.0')
              when 'HEAD'
                { git: 'https://github.com/ruby-grape/grape' }
              else
@@ -21,31 +19,33 @@ group :development, :test do
   gem 'pry', platforms: [:mri]
   gem 'pry-byebug', platforms: [:mri]
 
-  gem 'rack', '~> 2.2'
+  grape_version = ENV.fetch('GRAPE_VERSION', '2.2.0')
+  if grape_version == 'HEAD' || Gem::Version.new(grape_version) >= Gem::Version.new('2.0.0')
+    gem 'rack', '>= 3.0'
+  else
+    gem 'rack', '< 3.0'
+  end
+
   gem 'rack-cors'
   gem 'rack-test'
   gem 'rake'
   gem 'rdoc'
   gem 'rspec', '~> 3.9'
-  gem 'rubocop', '~> 1.0', require: false
-  gem 'webrick'
+  gem 'rubocop', '~> 1.50', require: false
+
+  unless ENV['MODEL_PARSER'] == 'grape-swagger-entity'
+    gem 'grape-swagger-entity', git: 'https://github.com/ruby-grape/grape-swagger-entity'
+  end
 end
 
 group :test do
-  gem 'coveralls_reborn', require: false
-
-  gem 'ruby-grape-danger', '~> 0.2.0', require: false
   gem 'simplecov', require: false
 end
 
 github_url = 'https://rubygems.pkg.github.com/tastyworks/'
 
-group :test, :development do
-  unless ENV['MODEL_PARSER'] == 'grape-swagger-entity'
-    gem 'grape-swagger-entity', git: 'https://github.com/ruby-grape/grape-swagger-entity'
-  end
-
-  source github_url do
+source github_url do
+  group :test, :development do
     gem 'tastyworks-development_dependencies', '~> 2.24', '>= 2.24.1'
   end
 end

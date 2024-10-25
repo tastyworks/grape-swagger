@@ -237,7 +237,7 @@ RSpec.shared_context 'representable swagger example' do
     }
   end
 
-  let(:swagger_typed_defintion) do
+  let(:swagger_typed_definition) do
     {
       'prop_boolean' => { 'description' => 'prop_boolean description', 'type' => 'boolean' },
       'prop_date' => { 'description' => 'prop_date description', 'type' => 'string', 'format' => 'date' },
@@ -306,12 +306,12 @@ RSpec.shared_context 'representable swagger example' do
           'post' => {
             'description' => 'This creates Thing.',
             'produces' => ['application/json'],
-            'consumes' => ['application/json'],
+            'consumes' => ['application/x-www-form-urlencoded'],
             'parameters' => [
               { 'in' => 'formData', 'name' => 'text', 'description' => 'Content of something.', 'type' => 'string', 'required' => true },
               { 'in' => 'formData', 'name' => 'links', 'type' => 'array', 'items' => { 'type' => 'string' }, 'required' => true }
             ],
-            'responses' => { '201' => { 'description' => 'This creates Thing.', 'schema' => { '$ref' => '#/definitions/Something' } }, '422' => { 'description' => 'Unprocessible Entity' } },
+            'responses' => { '201' => { 'description' => 'This creates Thing.', 'schema' => { '$ref' => '#/definitions/Something' } }, '422' => { 'description' => 'Unprocessable Entity' } },
             'tags' => ['thing'],
             'operationId' => 'postThing'
           }
@@ -328,7 +328,7 @@ RSpec.shared_context 'representable swagger example' do
           'put' => {
             'description' => 'This updates Thing.',
             'produces' => ['application/json'],
-            'consumes' => ['application/json'],
+            'consumes' => ['application/x-www-form-urlencoded'],
             'parameters' => [
               { 'in' => 'path', 'name' => 'id', 'type' => 'integer', 'format' => 'int32', 'required' => true },
               { 'in' => 'formData', 'name' => 'text', 'description' => 'Content of something.', 'type' => 'string', 'required' => false },

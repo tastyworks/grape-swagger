@@ -4,7 +4,7 @@ module GrapeSwagger
   module DocMethods
     class ParseParams
       class << self
-        def call(param, settings, path, route, definitions)
+        def call(param, settings, path, route, definitions, consumes) # rubocop:disable Metrics/ParameterLists
           method = route.request_method
           additional_documentation = settings.fetch(:documentation, {})
           settings.merge!(additional_documentation)
@@ -14,7 +14,7 @@ module GrapeSwagger
 
           # required properties
           @parsed_param = {
-            in: param_type(value_type),
+            in: param_type(value_type, consumes),
             name: settings[:full_name] || param
           }
 
@@ -25,6 +25,7 @@ module GrapeSwagger
           document_default_value(settings) unless value_type[:is_array]
           document_range_values(settings) unless value_type[:is_array]
           document_required(settings)
+          document_length_limits(value_type)
           document_additional_properties(definitions, settings) unless value_type[:is_array]
           document_add_extensions(settings)
           document_example(settings)
@@ -78,13 +79,10 @@ module GrapeSwagger
 
         def document_array_param(value_type, definitions)
           if value_type[:documentation].present?
-            param_type = value_type[:documentation][:param_type]
             doc_type = value_type[:documentation][:type]
             type = DataType.mapping(doc_type) if doc_type && !DataType.request_primitive?(doc_type)
             collection_format = value_type[:documentation][:collectionFormat]
           end
-
-          param_type ||= value_type[:param_type] || param_type(value_type)
 
           array_items = parse_array_item(
             definitions,
@@ -92,7 +90,6 @@ module GrapeSwagger
             value_type
           )
 
-          @parsed_param[:in] = param_type || 'body'
           @parsed_param[:items] = array_items
           @parsed_param[:type] = 'array'
           @parsed_param[:collectionFormat] = collection_format if DataType.collections.include?(collection_format)
@@ -115,6 +112,10 @@ module GrapeSwagger
 
           set_additional_properties, additional_properties = parse_additional_properties(definitions, value_type)
           array_items[:additionalProperties] = additional_properties if set_additional_properties
+
+          if value_type.key?(:items)
+            GrapeSwagger::DocMethods::Extensions.add_extensions_to_root(value_type[:items], array_items)
+          end
 
           array_items
         end
@@ -152,16 +153,32 @@ module GrapeSwagger
           @parsed_param[:example] = example if example
         end
 
-        def param_type(value_type)
+        def param_type(value_type, consumes)
           param_type = value_type[:param_type] || value_type[:in]
-          if value_type[:path].include?("{#{value_type[:param_name]}}")
+          if !value_type[:is_array] && value_type[:path].include?("{#{value_type[:param_name]}}")
             'path'
           elsif param_type
             param_type
           elsif %w[POST PUT PATCH].include?(value_type[:method])
-            'body'
+            if consumes.include?('application/x-www-form-urlencoded') || consumes.include?('multipart/form-data')
+              'formData'
+            else
+              'body'
+            end
+          elsif value_type[:is_array] && !DataType.query_array_primitive?(value_type[:data_type])
+            'formData'
           else
             'query'
+          end
+        end
+
+        def document_length_limits(value_type)
+          if value_type[:is_array]
+            @parsed_param[:minItems] = value_type[:min_length] if value_type.key?(:min_length)
+            @parsed_param[:maxItems] = value_type[:max_length] if value_type.key?(:max_length)
+          else
+            @parsed_param[:minLength] = value_type[:min_length] if value_type.key?(:min_length)
+            @parsed_param[:maxLength] = value_type[:max_length] if value_type.key?(:max_length)
           end
         end
 
@@ -179,7 +196,7 @@ module GrapeSwagger
         end
 
         def parse_range_values(values)
-          { minimum: values.first, maximum: values.last }
+          { minimum: values.begin, maximum: values.end }.compact
         end
       end
     end

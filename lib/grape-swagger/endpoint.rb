@@ -5,14 +5,14 @@ require 'active_support/core_ext/string/inflections'
 require 'grape-swagger/endpoint/params_parser'
 
 module Grape
-  class Endpoint
+  class Endpoint # rubocop:disable Metrics/ClassLength
     def content_types_for(target_class)
       content_types = (target_class.content_types || {}).values
 
       if content_types.empty?
         formats       = [target_class.format, target_class.default_format].compact.uniq
-        formats       = Grape::Formatter.formatters(**{}).keys if formats.empty?
-        content_types = Grape::ContentTypes::CONTENT_TYPES.select do |content_type, _mime_type|
+        formats       = GrapeSwagger::FORMATTER_DEFAULTS.keys if formats.empty?
+        content_types = GrapeSwagger::CONTENT_TYPE_DEFAULTS.select do |content_type, _mime_type|
           formats.include? content_type
         end.values
       end
@@ -27,7 +27,8 @@ module Grape
       object = {
         info: info_object(options[:info].merge(version: options[:doc_version])),
         swagger: '2.0',
-        produces: content_types_for(target_class),
+        produces: options[:produces] || content_types_for(target_class),
+        consumes: options[:consumes],
         authorizations: options[:authorizations],
         securityDefinitions: options[:security_definitions],
         security: options[:security],
@@ -117,8 +118,8 @@ module Grape
       method[:summary]     = summary_object(route)
       method[:description] = description_object(route)
       method[:produces]    = produces_object(route, options[:produces] || options[:format])
-      method[:consumes]    = consumes_object(route, options[:format])
-      method[:parameters]  = params_object(route, options, path)
+      method[:consumes]    = consumes_object(route, options[:consumes] || options[:format])
+      method[:parameters]  = params_object(route, options, path, method[:consumes])
       method[:security]    = security_object(route)
       method[:responses]   = response_object(route, options)
       method[:tags]        = route.options.fetch(:tags, tag_object(route, path))
@@ -174,7 +175,7 @@ module Grape
       GrapeSwagger::DocMethods::ProducesConsumes.call(route.settings.dig(:description, :consumes) || format)
     end
 
-    def params_object(route, options, path)
+    def params_object(route, options, path, consumes)
       parameters = build_request_params(route, options).each_with_object([]) do |(param, value), memo|
         next if hidden_parameter?(value, options)
 
@@ -186,7 +187,7 @@ module Grape
         elsif value[:type]
           expose_params(value[:type])
         end
-        memo << GrapeSwagger::DocMethods::ParseParams.call(param, value, path, route, @definitions)
+        memo << GrapeSwagger::DocMethods::ParseParams.call(param, value, path, route, @definitions, consumes)
       end
 
       if GrapeSwagger::DocMethods::MoveParams.can_be_moved?(route.request_method, parameters)
@@ -240,7 +241,8 @@ module Grape
       if route.http_codes.is_a?(Array) && route.http_codes.any? { |code| success_code?(code) }
         route.http_codes.clone
       else
-        success_codes_from_route(route) + (route.http_codes || route.options[:failure] || [])
+        success_codes_from_route(route) + default_code_from_route(route) +
+          (route.http_codes || route.options[:failure] || [])
       end
     end
 
@@ -266,6 +268,21 @@ module Grape
     end
 
     private
+
+    def default_code_from_route(route)
+      entity = route.options[:default_response]
+      return [] if entity.nil?
+
+      default_code = { code: 'default', message: 'Default Response' }
+      if entity.is_a?(Hash)
+        default_code[:message] = entity[:message] || default_code[:message]
+        default_code[:model] = entity[:model] if entity[:model].present?
+      else
+        default_code[:model] = entity
+      end
+
+      [default_code]
+    end
 
     def build_memo_schema(memo, route, value, response_model, options)
       if memo[value[:code]][:schema] && value[:as]
@@ -294,7 +311,7 @@ module Grape
                   else
                     build_reference_hash(response_model)
                   end
-      return reference unless value[:code] < 300
+      return reference unless value[:code] == 'default' || value[:code] < 300
 
       if value.key?(:as) && value.key?(:is_array)
         reference[value[:as]] = build_reference_array(reference[value[:as]])
@@ -360,7 +377,7 @@ module Grape
         route_params[key] = path.merge(params)
       end
 
-      route.params.delete_if { |key| key.is_a?(String) && param_keys.include?(key.to_sym) }.to_a
+      route_params.delete_if { |key| key.is_a?(String) && param_keys.include?(key.to_sym) }.to_a
     end
 
     # Iterates over namespaces recursively
@@ -396,7 +413,7 @@ module Grape
     end
 
     def expose_params_from_model(model)
-      model = model.is_a?(String) ? model.constantize : model
+      model = model.constantize if model.is_a?(String)
       model_name = model_name(model)
 
       return model_name if @definitions.key?(model_name)

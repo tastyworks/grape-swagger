@@ -1,17 +1,10 @@
 # frozen_string_literal: true
 
-if RUBY_ENGINE == 'ruby'
-  require 'simplecov'
-  require 'coveralls'
-
-  SimpleCov.formatter = Coveralls::SimpleCov::Formatter
-  Coveralls.wear!
-end
-
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 
 MODEL_PARSER = ENV.key?('MODEL_PARSER') ? ENV['MODEL_PARSER'].to_s.downcase.sub('grape-swagger-', '') : 'mock'
 
+require 'ostruct'
 require 'grape'
 require 'grape-swagger'
 

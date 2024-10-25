@@ -64,7 +64,7 @@ module GrapeSwagger
           resource - if given only for that it would be generated (optional)'
         task validate: :environment do
           # :nocov:
-          ENV['store'] = 'true'
+          ENV.store('store', 'true')
           ::Rake::Task['oapi:fetch'].invoke
           exit if error?
 
@@ -87,7 +87,7 @@ module GrapeSwagger
         get url, params
 
         @oapi = JSON.pretty_generate(
-          JSON.parse(last_response.body, symolize_names: true)
+          JSON.parse(last_response.body, symbolize_names: true)
         ) + "\n"
       end
       # rubocop:enable Style/StringConcatenation

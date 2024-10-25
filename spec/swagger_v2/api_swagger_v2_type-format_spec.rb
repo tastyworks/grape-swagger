@@ -28,6 +28,7 @@ describe 'type format settings' do
     module TheApi
       class TypeFormatApi < Grape::API
         desc 'full set of request data types',
+             consumes: ['application/x-www-form-urlencoded'],
              success: Entities::TypedDefinition
 
         params do
@@ -84,6 +85,6 @@ describe 'type format settings' do
   end
 
   specify do
-    expect(subject['definitions']['TypedDefinition']['properties']).to eql(swagger_typed_defintion)
+    expect(subject['definitions']['TypedDefinition']['properties']).to eql(swagger_typed_definition)
   end
 end
