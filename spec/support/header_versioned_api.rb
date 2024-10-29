@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module HeaderVersionedApi
   class V1 < Grape::API
     version 'v1', using: :accept_version_header do

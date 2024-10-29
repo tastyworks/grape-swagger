@@ -41,11 +41,3 @@ end
 group :test do
   gem 'simplecov', require: false
 end
-
-github_url = 'https://rubygems.pkg.github.com/tastyworks/'
-
-source github_url do
-  group :test, :development do
-    gem 'tastyworks-development_dependencies', '~> 2.24', '>= 2.24.1'
-  end
-end

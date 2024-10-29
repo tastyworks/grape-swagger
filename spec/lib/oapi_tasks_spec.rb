@@ -10,10 +10,12 @@ RSpec.describe GrapeSwagger::Rake::OapiTasks do
   let(:docs_url) { docs_url_data[:path] }
   let(:resource) { nil }
   let(:store) { nil }
+  let(:include_hidden) { false }
 
   before do
     allow(ENV).to receive(:fetch).with('resource', nil).and_return(resource)
     allow(ENV).to receive(:fetch).with('store', nil).and_return(store)
+    allow(ENV).to receive(:fetch).with('include_hidden', false).and_return(include_hidden)
   end
 
   describe '.new' do

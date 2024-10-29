@@ -103,7 +103,7 @@ describe 'swagger spec v2.0' do
           requires :elements, documentation: {
             type: 'QueryInputElement',
             desc: 'Set of configuration',
-            param_type: 'body',
+            param_type: 'query',
             is_array: true,
             required: true
           }

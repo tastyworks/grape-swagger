@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module NestedVersionApi
   class V1 < Grape::API
     version 'v1', using: :path do

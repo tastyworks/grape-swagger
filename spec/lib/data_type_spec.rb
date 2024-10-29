@@ -64,7 +64,7 @@ describe GrapeSwagger::DocMethods::DataType do
   describe 'Rack::Multipart::UploadedFile' do
     let(:value) { { type: Rack::Multipart::UploadedFile } }
 
-    it { is_expected.to eq 'file' }
+    it { is_expected.to eq 'byte' }
   end
 
   describe 'Grape::API::Boolean' do

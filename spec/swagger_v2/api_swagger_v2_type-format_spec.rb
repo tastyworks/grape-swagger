@@ -18,8 +18,7 @@ require 'spec_helper'
 # 'password'                    ->  string password
 # 'email'                       ->  string email
 # Boolean                       ->  boolean
-# JSON                          ->  json
-# Rack::Multipart::UploadedFile ->  file
+# Rack::Multipart::UploadedFile ->  string byte
 
 describe 'type format settings' do
   include_context "#{MODEL_PARSER} swagger example"
@@ -44,7 +43,6 @@ describe 'type format settings' do
           requires :param_time,      type: Time
           optional :param_boolean,   type: Boolean
           optional :param_file,      type: File
-          optional :param_json,      type: JSON
         end
 
         post '/request_types' do
@@ -78,8 +76,7 @@ describe 'type format settings' do
         { 'in' => 'formData', 'name' => 'param_date_time', 'required' => true, 'type' => 'string', 'format' => 'date-time' },
         { 'in' => 'formData', 'name' => 'param_time', 'required' => true, 'type' => 'string', 'format' => 'date-time' },
         { 'in' => 'formData', 'name' => 'param_boolean', 'required' => false, 'type' => 'boolean' },
-        { 'in' => 'formData', 'name' => 'param_file', 'required' => false, 'type' => 'file' },
-        { 'in' => 'formData', 'name' => 'param_json', 'required' => false, 'type' => 'json' }
+        { 'in' => 'formData', 'name' => 'param_file', 'required' => false, 'type' => 'string', 'format' => 'byte' }
       ]
     )
   end

@@ -34,12 +34,12 @@ describe '#883 Group Params as Array' do
     specify do
       expect(subject['paths']['/issue_883/get_primitive_array_parameters']['get']['parameters']).to eql(
         [
-          { 'in' => 'query', 'name' => 'array_of_string', 'type' => 'array', 'items' => { 'type' => 'string' }, 'required' => true },
-          { 'in' => 'query', 'name' => 'array_of_integer', 'type' => 'array', 'items' => { 'type' => 'integer', 'format' => 'int32' }, 'required' => true }
+          { 'in' => 'query', 'name' => 'array_of_string', 'description' => ' (example: array_of_string[]={value1}&array_of_string[]={value2})', 'type' => 'array', 'items' => { 'type' => 'string' }, 'required' => true },
+          { 'in' => 'query', 'name' => 'array_of_integer', 'description' => ' (example: array_of_integer[]={value1}&array_of_integer[]={value2})', 'type' => 'array', 'items' => { 'type' => 'integer', 'format' => 'int32' }, 'required' => true }
         ]
       )
       expect(subject['paths']['/issue_883/get_object_array_parameters']['get']['parameters']).to eql(
-        [{ 'in' => 'formData', 'items' => { 'type' => 'string' }, 'name' => 'array_of', 'required' => true, 'type' => 'array' }]
+        [{ 'in' => 'formData', 'items' => { 'type' => 'string' }, 'name' => 'array_of', 'description' => ' (example: array_of[]={value1}&array_of[]={value2})', 'required' => true, 'type' => 'array' }]
       )
     end
   end

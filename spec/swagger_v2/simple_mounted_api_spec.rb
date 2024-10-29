@@ -183,7 +183,7 @@ describe 'a simple mounted api' do
             'get' => {
               'description' => 'this uses a custom parameter',
               'produces' => ['application/json'],
-              'parameters' => [{ 'in' => 'formData', 'name' => 'custom', 'description' => 'array of items', 'required' => false, 'type' => 'array', 'items' => { 'type' => 'CustomType' } }],
+              'parameters' => [{ 'in' => 'formData', 'name' => 'custom', 'description' => 'array of items (example: custom[]={value1}&custom[]={value2})', 'required' => false, 'type' => 'array', 'items' => { 'type' => 'CustomType' } }],
               'tags' => ['custom'],
               'operationId' => 'getCustom',
               'responses' => { '200' => { 'description' => 'this uses a custom parameter' } }
@@ -319,7 +319,7 @@ describe 'a simple mounted api' do
             'get' => {
               'description' => 'this uses a custom parameter',
               'produces' => ['application/json'],
-              'parameters' => [{ 'in' => 'formData', 'name' => 'custom', 'description' => 'array of items', 'required' => false, 'type' => 'array', 'items' => { 'type' => 'CustomType' } }],
+              'parameters' => [{ 'in' => 'formData', 'name' => 'custom', 'description' => 'array of items (example: custom[]={value1}&custom[]={value2})', 'required' => false, 'type' => 'array', 'items' => { 'type' => 'CustomType' } }],
               'tags' => ['custom'],
               'operationId' => 'getCustom',
               'responses' => { '200' => { 'description' => 'this uses a custom parameter' } }

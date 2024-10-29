@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 module GrapeSwagger
   module Rake
     class Util
       class << self
         def swagger_doc_url_data_for(api_class)
           api_class.routes
-                   .select { |route| route.path.include?('swagger_doc') }
+                   .select { |route| route.path.include?(GrapeSwagger::DocMethods.class_variable_get(:@@mount_path)) }
                    .reject { |route| route.path.include?(':name') }
                    .map { |route| swagger_doc_version_data(route, api_class) }
         end
 
-        def swagger_doc_version_data(oapi_route, api_class)
+        def swagger_doc_version_data(oapi_route, _api_class)
           version = oapi_route.version.to_s
           path = sanitize_doc_url(oapi_route.path)
 
@@ -32,7 +34,7 @@ module GrapeSwagger
         def file_path(api_version)
           version_suffix = api_version.blank? ? '' : "_#{api_version}"
           store = ENV.fetch('store', nil)
-          
+
           name = if store == 'true' || store.blank?
                    "swagger_doc#{version_suffix}.json"
                  else

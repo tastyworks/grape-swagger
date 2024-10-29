@@ -446,6 +446,7 @@ module Grape
     # Only returns true if route is explicitly marked `public: true`
     def public?(route, options)
       return true if options[:include_hidden]
+
       walk_route_for_value(:public, route, options)
     end
 

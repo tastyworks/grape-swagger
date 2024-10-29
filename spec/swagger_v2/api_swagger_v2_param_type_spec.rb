@@ -223,7 +223,7 @@ describe 'setting of param type, such as `query`, `path`, `formData`, `body`, `h
       specify do
         expect(subject['paths']['/upload']['post']['parameters']).to eql(
           [
-            { 'in' => 'formData', 'name' => 'name', 'required' => true, 'type' => 'file' }
+            { 'in' => 'formData', 'name' => 'name', 'required' => true, 'type' => 'string', 'format' => 'byte' }
           ]
         )
       end

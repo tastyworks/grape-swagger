@@ -45,7 +45,21 @@ module GrapeSwagger
           return description unless settings[:is_array]
           return description unless request_method.downcase.to_sym == :get
 
-          "#{description} (example: #{param}[]={value1}&#{param}[]={value2})"
+          suffix = case settings.dig(:documentation, :collectionFormat)
+                   when 'csv'
+                     " (example: #{param}={value1},{value2})"
+                   when 'ssv'
+                     " (example: #{param}={value1} {value2})"
+                   when 'tsv'
+                     " (example: #{param}={value1}\\t{value2})"
+                   when 'pipes'
+                     " (example: #{param}={value1}|{value2})"
+                   when 'multi'
+                     " (example: #{param}={value1}&#{param}={value2})"
+                   when 'brackets', nil
+                     " (example: #{param}[]={value1}&#{param}[]={value2})"
+                   end
+          "#{description}#{suffix}"
         end
 
         def document_required(settings)
