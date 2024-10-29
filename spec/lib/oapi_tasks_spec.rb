@@ -10,15 +10,17 @@ RSpec.describe GrapeSwagger::Rake::OapiTasks do
   let(:docs_url) { docs_url_data[:path] }
   let(:resource) { nil }
   let(:store) { nil }
+  let(:include_hidden) { false }
 
   before do
     allow(ENV).to receive(:fetch).with('resource', nil).and_return(resource)
     allow(ENV).to receive(:fetch).with('store', nil).and_return(store)
+    allow(ENV).to receive(:fetch).with('include_hidden', false).and_return(include_hidden)
   end
 
   describe '.new' do
     it 'accepts class name as a constant' do
-      expect(described_class.new(::Api::Base).send(:api_class)).to eq(Api::Base)
+      expect(described_class.new(Api::Base).send(:api_class)).to eq(Api::Base)
     end
 
     it 'accepts class name as a string' do
@@ -48,7 +50,7 @@ RSpec.describe GrapeSwagger::Rake::OapiTasks do
 
       describe 'store it' do
         let(:store) { 'true' }
-        
+
         it 'allows to save' do
           expect(subject.send(:save_to_file?)).to be true
         end
@@ -99,7 +101,7 @@ RSpec.describe GrapeSwagger::Rake::OapiTasks do
         end
 
         it 'returns complete doc' do
-          expect(response['paths'].length).to eql 2
+          expect(response['paths'].length).to eql 3
         end
       end
     end

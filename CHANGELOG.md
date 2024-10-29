@@ -1,4 +1,4 @@
-### next
+### 2.1.2 (Next)
 
 #### Features
 
@@ -6,7 +6,81 @@
 
 #### Fixes
 
+* [#943](https://github.com/ruby-grape/grape-swagger/pull/943): Fix route_param documentation and type - [@4ndv](https://github.com/4ndv)
+* [#944](https://github.com/ruby-grape/grape-swagger/pull/944): Amend a few typographic errors - [@pieterocp](https://github.com/pieterocp)
 * Your contribution here.
+
+
+### 2.1.1 (Sep 21, 2024)
+
+#### Fixes
+
+* [#940](https://github.com/ruby-grape/grape-swagger/pull/940): Grape 2.2.0 compatibility - [@padde](https://github.com/padde)
+
+
+### 2.1.0 (May 14, 2024)
+
+#### Features
+
+* [#927](https://github.com/ruby-grape/grape-swagger/pull/927): Set default parameter location based on consumes - [@spaceraccoon](https://github.com/spaceraccoon)
+* [#929](https://github.com/ruby-grape/grape-swagger/pull/929): Set query parameter for array of primitive types - [@spaceraccoon](https://github.com/spaceraccoon)
+
+#### Fixes
+
+* [#926](https://github.com/ruby-grape/grape-swagger/pull/926): Refactor route and namespace combination logic - [@numbata](https://github.com/numbata)
+
+
+### 2.0.3 (April 26, 2024)
+
+#### Fixes
+
+* [#922](https://github.com/ruby-grape/grape-swagger/pull/922): Force request body to be an schema object - [@numbata](https://github.com/numbata)
+* [#923](https://github.com/ruby-grape/grape-swagger/pull/923): Enabled schema definitions for body parameters in DELETE requests - [@numbata](https://github.com/numbata)
+* [#924](https://github.com/ruby-grape/grape-swagger/pull/924): fix: Use mount_path to narrow down urls_for - [@chibicco](https://github.com/chibicco)
+
+
+### 2.0.2 (Februar 2, 2024)
+
+#### Fixes
+
+* [#918](https://github.com/ruby-grape/grape-swagger/pull/918): Fix params extension does not work when param_type is body - [@numbata](https://github.com/numbata)
+
+
+### 2.0.1 (Januar 2, 2024)
+
+#### Features
+
+* [#914](https://github.com/ruby-grape/grape-swagger/pull/914): Support Ruby 3.3 - [@LeFnord](https://github.com/LeFnord)
+
+#### Fixes
+
+* [#916](https://github.com/ruby-grape/grape-swagger/pull/916): Restore Ruby 3.0 support - [@godfat](https://github.com/godfat)
+
+
+### 2.0.0 (November 7, 2023)
+
+#### Features
+
+* [#910](https://github.com/ruby-grape/grape-swagger/pull/910): Allow using Grape v2 - [@ninoseki](https://github.com/ninoseki)
+
+#### Fixes
+
+* [#903](https://github.com/ruby-grape/grape-swagger/pull/903): Accept `example` documentation parameter for arrays - [@VladMomotov](https://github.com/VladMomotov)
+
+
+### 1.6.1 (May 21, 2023)
+
+#### Fixes
+
+* [#868](https://github.com/ruby-grape/grape-swagger/pull/896): Fix parsing endless range values - [@dhruvCW](https://github.com/dhruvCW)
+
+
+### 1.6.0 (March 19, 2023)
+
+#### Features
+
+* [#872](https://github.com/ruby-grape/grape-swagger/pull/872): Add `consumes` and `produces` options to `add_swagger_documentation` - [@spaceraccoon](https://github.com/spaceraccoon)
+* [#868](https://github.com/ruby-grape/grape-swagger/pull/868): Add `default` endpoint option to specify default response - [@dhruvCW](https://github.com/dhruvCW)
 
 
 ### 1.5.0 (July 28, 2022)
@@ -28,7 +102,6 @@
 * [#846](https://github.com/ruby-grape/grape-swagger/pull/846): Refactor oapi fetch task [@Vachman](https://github.com/Vachman)
 * [#850](https://github.com/ruby-grape/grape-swagger/pull/850): Fix value of enum to be Array [@takahashim](https://github.com/takahashim)
 
-
 ### 1.4.3 (January 5, 2022)
 
 #### Fixes
@@ -39,7 +112,6 @@
 * [#853](https://github.com/ruby-grape/grape-swagger/pull/853): Add webrick gem so that example works in Ruby 3.x - [@takahashim](https://github.com/takahashim)
 * [#844](https://github.com/ruby-grape/grape-swagger/pull/844): Fixes the regexp used for parsing routes - [@senhalil](https://github.com/senhalil)
 * [#862](https://github.com/ruby-grape/grape-swagger/pull/862): Allow using nicknames for body definitions - [@magni-](https://github.com/magni-)
-* Your contribution here.
 
 ### 1.4.2 (October 22, 2021)
 

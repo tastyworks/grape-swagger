@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   class Item < Grape::API
     version 'v1', using: :path
@@ -7,6 +9,10 @@ module Api
     end
 
     namespace :otherItem do
+      get '/'
+    end
+
+    namespace :my_doc do
       get '/'
     end
   end

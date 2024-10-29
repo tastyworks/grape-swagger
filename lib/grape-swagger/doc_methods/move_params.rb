@@ -18,8 +18,6 @@ module GrapeSwagger
 
           params_to_move = movable_params(params)
 
-          return (params + correct_array_param(params_to_move)) if should_correct_array?(params_to_move)
-
           params << parent_definition_of_params(params_to_move, path, route)
 
           params
@@ -27,21 +25,11 @@ module GrapeSwagger
 
         private
 
-        def should_correct_array?(param)
-          param.length == 1 && param.first[:in] == 'body' && param.first[:type] == 'array'
-        end
-
-        def correct_array_param(param)
-          param.first[:schema] = { type: param.first.delete(:type), items: param.first.delete(:items) }
-
-          param
-        end
-
         def parent_definition_of_params(params, path, route)
           definition_name = OperationId.build(route, path)
-          build_definition(definition_name, params)
+          # NOTE: Parent definition is always object
+          @definitions[definition_name] = object_type
           definition = @definitions[definition_name]
-
           move_params_to_new(definition, params)
 
           definition[:description] = route.description if route.try(:description)
@@ -53,6 +41,7 @@ module GrapeSwagger
           params, nested_params = params.partition { |x| !x[:name].to_s.include?('[') }
           params.each do |param|
             property = param[:name]
+
             param_properties, param_required = build_properties([param])
             add_properties_to_definition(definition, param_properties, param_required)
             related_nested_params, nested_params = nested_params.partition { |x| x[:name].start_with?("#{property}[") }
@@ -86,6 +75,7 @@ module GrapeSwagger
                                else
                                  document_as_property(param)
                                end
+            add_extension_properties(properties[name], param)
 
             required << name if deletable?(param) && param[:required]
           end
@@ -97,7 +87,14 @@ module GrapeSwagger
           {}.tap do |property|
             property[:type] = 'array'
             property[:description] = param.delete(:description) unless param[:description].nil?
+            property[:example] = param.delete(:example) unless param[:example].nil?
             property[:items] = document_as_property(param)[:items]
+          end
+        end
+
+        def add_extension_properties(definition, values)
+          values.each do |key, value|
+            definition[key] = value if key.start_with?('x-')
           end
         end
 
@@ -189,7 +186,7 @@ module GrapeSwagger
         end
 
         def move_methods
-          [:post, :put, :patch, 'POST', 'PUT', 'PATCH']
+          [:delete, :post, :put, :patch, 'DELETE', 'POST', 'PUT', 'PATCH']
         end
 
         def includes_body_param?(params)

@@ -183,7 +183,7 @@ RSpec.shared_context 'mock swagger example' do
     }
   end
 
-  let(:swagger_typed_defintion) do
+  let(:swagger_typed_definition) do
     {
       'mock_data' => {
         'type' => 'string',
@@ -217,7 +217,7 @@ RSpec.shared_context 'mock swagger example' do
           'get' => {
             'description' => 'nested route inside namespace',
             'produces' => ['application/json'],
-            'parameters' => [{ 'in' => 'body', 'name' => 'elements', 'description' => 'Set of configuration', 'type' => 'array', 'items' => { 'type' => 'string' }, 'required' => true }],
+            'parameters' => [{ 'in' => 'query', 'name' => 'elements', 'description' => 'Set of configuration (example: elements[]={value1}&elements[]={value2})', 'type' => 'array', 'items' => { 'type' => 'string' }, 'required' => true }],
             'responses' => { '200' => { 'description' => 'nested route inside namespace', 'schema' => { '$ref' => '#/definitions/QueryInput' } } },
             'tags' => ['other_thing'],
             'operationId' => 'getV3OtherThingElements',
@@ -232,7 +232,7 @@ RSpec.shared_context 'mock swagger example' do
             'parameters' => [
               { 'in' => 'query', 'name' => 'id', 'description' => 'Identity of Something', 'type' => 'integer', 'format' => 'int32', 'required' => false },
               { 'in' => 'query', 'name' => 'text', 'description' => 'Content of something.', 'type' => 'string', 'required' => false },
-              { 'in' => 'formData', 'name' => 'links', 'type' => 'array', 'items' => { 'type' => 'link' }, 'required' => false },
+              { 'in' => 'formData', 'name' => 'links', 'description' => ' (example: links[]={value1}&links[]={value2})', 'type' => 'array', 'items' => { 'type' => 'link' }, 'required' => false },
               { 'in' => 'query', 'name' => 'others', 'type' => 'text', 'required' => false }
             ],
             'responses' => { '200' => { 'description' => 'This gets Things.' }, '401' => { 'description' => 'Unauthorized', 'schema' => { '$ref' => '#/definitions/ApiError' } } },
@@ -242,12 +242,12 @@ RSpec.shared_context 'mock swagger example' do
           'post' => {
             'description' => 'This creates Thing.',
             'produces' => ['application/json'],
-            'consumes' => ['application/json'],
+            'consumes' => ['application/x-www-form-urlencoded'],
             'parameters' => [
               { 'in' => 'formData', 'name' => 'text', 'description' => 'Content of something.', 'type' => 'string', 'required' => true },
               { 'in' => 'formData', 'name' => 'links', 'type' => 'array', 'items' => { 'type' => 'string' }, 'required' => true }
             ],
-            'responses' => { '201' => { 'description' => 'This creates Thing.', 'schema' => { '$ref' => '#/definitions/Something' } }, '422' => { 'description' => 'Unprocessible Entity' } },
+            'responses' => { '201' => { 'description' => 'This creates Thing.', 'schema' => { '$ref' => '#/definitions/Something' } }, '422' => { 'description' => 'Unprocessable Entity' } },
             'tags' => ['thing'],
             'operationId' => 'postThing'
           }
@@ -264,7 +264,7 @@ RSpec.shared_context 'mock swagger example' do
           'put' => {
             'description' => 'This updates Thing.',
             'produces' => ['application/json'],
-            'consumes' => ['application/json'],
+            'consumes' => ['application/x-www-form-urlencoded'],
             'parameters' => [
               { 'in' => 'path', 'name' => 'id', 'type' => 'integer', 'format' => 'int32', 'required' => true },
               { 'in' => 'formData', 'name' => 'text', 'description' => 'Content of something.', 'type' => 'string', 'required' => false },

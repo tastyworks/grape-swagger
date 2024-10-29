@@ -12,12 +12,12 @@ RSpec.describe GrapeSwagger::Rake::Util do
 
       it 'generates correct data' do
         expect(result).to eq([
-          {
-            path: '/api/swagger_doc',
-            api_version: '',
-            file_path: File.join(Dir.getwd, 'swagger_doc.json')
-          }
-        ])
+                               {
+                                 path: '/api/swagger_doc',
+                                 api_version: '',
+                                 file_path: File.join(Dir.getwd, 'swagger_doc.json')
+                               }
+                             ])
       end
     end
 
@@ -26,17 +26,17 @@ RSpec.describe GrapeSwagger::Rake::Util do
 
       it 'generates correct data' do
         expect(result).to eq([
-          {
-            path: '/api/v1/swagger_doc',
-            api_version: 'v1',
-            file_path: File.join(Dir.getwd, 'swagger_doc_v1.json')
-          },
-          {
-            path: '/api/v2/swagger_doc',
-            api_version: 'v2',
-            file_path: File.join(Dir.getwd, 'swagger_doc_v2.json')
-          }
-        ])
+                               {
+                                 path: '/api/v1/swagger_doc',
+                                 api_version: 'v1',
+                                 file_path: File.join(Dir.getwd, 'swagger_doc_v1.json')
+                               },
+                               {
+                                 path: '/api/v2/swagger_doc',
+                                 api_version: 'v2',
+                                 file_path: File.join(Dir.getwd, 'swagger_doc_v2.json')
+                               }
+                             ])
       end
     end
 
@@ -45,17 +45,17 @@ RSpec.describe GrapeSwagger::Rake::Util do
 
       it 'generates correct data' do
         expect(result).to eq([
-          {
-            path: '/api/swagger_doc',
-            api_version: 'v1',
-            file_path: File.join(Dir.getwd, 'swagger_doc_v1.json')
-          },
-          {
-            path: '/api/swagger_doc',
-            api_version: 'v2',
-            file_path: File.join(Dir.getwd, 'swagger_doc_v2.json')
-          }
-        ])
+                               {
+                                 path: '/api/swagger_doc',
+                                 api_version: 'v1',
+                                 file_path: File.join(Dir.getwd, 'swagger_doc_v1.json')
+                               },
+                               {
+                                 path: '/api/swagger_doc',
+                                 api_version: 'v2',
+                                 file_path: File.join(Dir.getwd, 'swagger_doc_v2.json')
+                               }
+                             ])
       end
     end
   end
