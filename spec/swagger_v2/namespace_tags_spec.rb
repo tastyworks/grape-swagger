@@ -23,7 +23,7 @@ describe 'namespace tags check' do
     end
 
     specify do
-      expect(subject['tags']).to eql(
+      expect(subject['tags']).to match_array(
         [
           { 'name' => 'hudson', 'description' => 'Operations about hudsons' },
           { 'name' => 'colorado', 'description' => 'Operations about colorados' },

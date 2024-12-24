@@ -120,7 +120,9 @@ module Grape
     end
 
     def sort_paths
-      @paths.transform_values! { |objects| objects.sort_by { |verb, _object| VERBS_ORDER.index(verb) }.to_h }
+      @paths.transform_values! do |objects|
+        objects.sort_by { |verb, _object| VERBS_ORDER.index(verb) || VERBS_ORDER.size }.to_h
+      end
       @paths = @paths.sort_by { |(path, _objects)| path }.to_h
     end
 

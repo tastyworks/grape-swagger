@@ -14,7 +14,9 @@ describe 'mount override api' do
       end
     end
 
-    new_api = Class.new(Grape::API) do
+    Class.new(Grape::API) do
+      mount old_api
+
       desc 'new endpoint', success: { code: 200, message: 'new message' }
       params do
         optional :param, type: String, desc: 'new param'
@@ -22,11 +24,6 @@ describe 'mount override api' do
       get do
         'new'
       end
-    end
-
-    Class.new(Grape::API) do
-      mount new_api
-      mount old_api
 
       add_swagger_documentation format: :json
     end

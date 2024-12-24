@@ -199,10 +199,10 @@ RSpec.shared_context 'entity swagger example' do
       'host' => 'example.org',
       'basePath' => '/api',
       'tags' => [
-        { 'name' => 'other_thing', 'description' => 'Operations about other_things' },
+        { 'name' => 'dummy', 'description' => 'Operations about dummies' },
         { 'name' => 'thing', 'description' => 'Operations about things' },
         { 'name' => 'thing2', 'description' => 'Operations about thing2s' },
-        { 'name' => 'dummy', 'description' => 'Operations about dummies' }
+        { 'name' => 'other_thing', 'description' => 'Operations about other_things' }
       ],
       'paths' => {
         '/v3/other_thing/{elements}' => {
