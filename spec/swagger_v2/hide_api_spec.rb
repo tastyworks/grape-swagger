@@ -48,7 +48,7 @@ describe 'a hide mounted api' do
       'swagger' => '2.0',
       'produces' => ['application/xml', 'application/json', 'application/octet-stream', 'text/plain'],
       'host' => 'example.org',
-      'tags' => [{ 'name' => 'simple', 'description' => 'Operations about simples' }, { 'name' => 'lazy', 'description' => 'Operations about lazies' }],
+      'tags' => [{ 'name' => 'lazy', 'description' => 'Operations about lazies' }, { 'name' => 'simple', 'description' => 'Operations about simples' }],
       'paths' => {
         '/simple' => {
           'get' => {

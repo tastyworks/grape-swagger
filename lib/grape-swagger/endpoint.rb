@@ -6,6 +6,8 @@ require 'grape-swagger/endpoint/params_parser'
 
 module Grape
   class Endpoint # rubocop:disable Metrics/ClassLength
+    VERBS_ORDER = %i[get post put patch delete options head].freeze
+
     def content_types_for(target_class)
       content_types = (target_class.content_types || {}).values
 
@@ -84,6 +86,8 @@ module Grape
         path_item(routes, options)
       end
 
+      sort_paths
+
       [@paths, @definitions]
     end
 
@@ -103,6 +107,8 @@ module Grape
 
         verb, method_object = method_object(route, options, path)
 
+        next if @paths.dig(path.to_s, verb)
+
         if @paths.key?(path.to_s)
           @paths[path.to_s][verb] = method_object
         else
@@ -111,6 +117,13 @@ module Grape
 
         GrapeSwagger::DocMethods::Extensions.add(@paths[path.to_s], @definitions, route)
       end
+    end
+
+    def sort_paths
+      @paths.transform_values! do |objects|
+        objects.sort_by { |verb, _object| VERBS_ORDER.index(verb) || VERBS_ORDER.size }.to_h
+      end
+      @paths = @paths.sort_by { |(path, _objects)| path }.to_h
     end
 
     def method_object(route, options, path)
@@ -387,7 +400,7 @@ module Grape
       return param unless stackable_values
       return params unless stackable_values.is_a? Grape::Util::StackableValues
 
-      stackable_values&.new_values&.dig(:namespace)&.each do |namespace|
+      stackable_values.new_values&.dig(:namespace)&.each do |namespace|
         space = namespace.space.to_s.gsub(':', '')
         params[space] = namespace.options || {}
       end
