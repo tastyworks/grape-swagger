@@ -6,14 +6,12 @@ module GrapeSwagger
   module DocMethods
     class MoveParams
       class << self
-        attr_accessor :definitions
-
         def can_be_moved?(http_verb, params)
           move_methods.include?(http_verb) && includes_body_param?(params)
         end
 
         def to_definition(path, params, route, definitions)
-          @definitions = definitions
+          self.definitions = definitions
           unify!(params)
 
           params_to_move = movable_params(params)
@@ -23,13 +21,21 @@ module GrapeSwagger
           params
         end
 
+        def definitions
+          Thread.current[:grape_swagger_doc_methods_move_params_definitions]
+        end
+
+        def definitions=(definitions)
+          Thread.current[:grape_swagger_doc_methods_move_params_definitions] = definitions
+        end
+
         private
 
         def parent_definition_of_params(params, path, route)
           definition_name = OperationId.build(route, path)
           # NOTE: Parent definition is always object
-          @definitions[definition_name] = object_type
-          definition = @definitions[definition_name]
+          definitions[definition_name] = object_type
+          definition = definitions[definition_name]
           move_params_to_new(definition, params)
 
           definition[:description] = route.description if route.try(:description)
@@ -103,7 +109,7 @@ module GrapeSwagger
             next unless param.key?(x)
 
             value = param[x]
-            if x == :type && @definitions[value].present?
+            if x == :type && definitions[value].present?
               memo['$ref'] = "#/definitions/#{value}"
             else
               memo[x] = value
@@ -149,7 +155,7 @@ module GrapeSwagger
         end
 
         def build_definition(name, params)
-          @definitions[name] = should_expose_as_array?(params) ? array_type : object_type
+          definitions[name] = should_expose_as_array?(params) ? array_type : object_type
 
           name
         end

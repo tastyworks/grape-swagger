@@ -13,7 +13,7 @@ module GrapeSwagger
           value_type = settings.merge(data_type: data_type, path: path, param_name: param, method: method)
 
           # required properties
-          @parsed_param = {
+          self.parsed_param = {
             in: param_type(value_type, consumes),
             name: settings[:full_name] || param
           }
@@ -30,7 +30,7 @@ module GrapeSwagger
           document_add_extensions(settings)
           document_example(settings)
 
-          @parsed_param
+          parsed_param
         end
 
         private
@@ -38,7 +38,7 @@ module GrapeSwagger
         def document_description(settings, param, request_method)
           description = settings[:desc] || settings[:description]
           description = add_querystring_array_example(description, param, request_method, settings)
-          @parsed_param[:description] = description if description
+          parsed_param[:description] = description if description
         end
 
         def add_querystring_array_example(description, param, request_method, settings)
@@ -63,32 +63,32 @@ module GrapeSwagger
         end
 
         def document_required(settings)
-          @parsed_param[:required] = settings[:required] || false
-          @parsed_param[:required] = true if @parsed_param[:in] == 'path'
+          parsed_param[:required] = settings[:required] || false
+          parsed_param[:required] = true if parsed_param[:in] == 'path'
         end
 
         def document_range_values(settings)
           values               = settings[:values] || nil
           enum_or_range_values = parse_enum_or_range_values(values)
-          @parsed_param.merge!(enum_or_range_values) if enum_or_range_values
+          parsed_param.merge!(enum_or_range_values) if enum_or_range_values
         end
 
         def document_default_value(settings)
-          @parsed_param[:default] = settings[:default] if settings.key?(:default)
+          parsed_param[:default] = settings[:default] if settings.key?(:default)
         end
 
         def document_type_and_format(settings, data_type)
           if DataType.primitive?(data_type)
             data = DataType.mapping(data_type)
-            @parsed_param[:type], @parsed_param[:format] = data
+            parsed_param[:type], parsed_param[:format] = data
           else
-            @parsed_param[:type] = data_type
+            parsed_param[:type] = data_type
           end
-          @parsed_param[:format] = settings[:format] if settings[:format].present?
+          parsed_param[:format] = settings[:format] if settings[:format].present?
         end
 
         def document_add_extensions(settings)
-          GrapeSwagger::DocMethods::Extensions.add_extensions_to_root(settings, @parsed_param)
+          GrapeSwagger::DocMethods::Extensions.add_extensions_to_root(settings, parsed_param)
         end
 
         def document_array_param(value_type, definitions)
@@ -104,19 +104,19 @@ module GrapeSwagger
             value_type
           )
 
-          @parsed_param[:items] = array_items
-          @parsed_param[:type] = 'array'
-          @parsed_param[:collectionFormat] = collection_format if DataType.collections.include?(collection_format)
+          parsed_param[:items] = array_items
+          parsed_param[:type] = 'array'
+          parsed_param[:collectionFormat] = collection_format if DataType.collections.include?(collection_format)
         end
 
         def parse_array_item(definitions, type, value_type)
           array_items = {}
           if definitions[value_type[:data_type]]
-            array_items['$ref'] = "#/definitions/#{@parsed_param[:type]}"
+            array_items['$ref'] = "#/definitions/#{parsed_param[:type]}"
           else
-            array_items[:type] = type || @parsed_param[:type] == 'array' ? 'string' : @parsed_param[:type]
+            array_items[:type] = type || parsed_param[:type] == 'array' ? 'string' : parsed_param[:type]
           end
-          array_items[:format] = @parsed_param.delete(:format) if @parsed_param[:format]
+          array_items[:format] = parsed_param.delete(:format) if parsed_param[:format]
 
           values = value_type[:values] || nil
           enum_or_range_values = parse_enum_or_range_values(values)
@@ -136,7 +136,7 @@ module GrapeSwagger
 
         def document_additional_properties(definitions, settings)
           set_additional_properties, additional_properties = parse_additional_properties(definitions, settings)
-          @parsed_param[:additionalProperties] = additional_properties if set_additional_properties
+          parsed_param[:additionalProperties] = additional_properties if set_additional_properties
         end
 
         def parse_additional_properties(definitions, settings)
@@ -164,7 +164,7 @@ module GrapeSwagger
 
         def document_example(settings)
           example = settings[:example]
-          @parsed_param[:example] = example if example
+          parsed_param[:example] = example if example
         end
 
         def param_type(value_type, consumes)
@@ -188,11 +188,11 @@ module GrapeSwagger
 
         def document_length_limits(value_type)
           if value_type[:is_array]
-            @parsed_param[:minItems] = value_type[:min_length] if value_type.key?(:min_length)
-            @parsed_param[:maxItems] = value_type[:max_length] if value_type.key?(:max_length)
+            parsed_param[:minItems] = value_type[:min_length] if value_type.key?(:min_length)
+            parsed_param[:maxItems] = value_type[:max_length] if value_type.key?(:max_length)
           else
-            @parsed_param[:minLength] = value_type[:min_length] if value_type.key?(:min_length)
-            @parsed_param[:maxLength] = value_type[:max_length] if value_type.key?(:max_length)
+            parsed_param[:minLength] = value_type[:min_length] if value_type.key?(:min_length)
+            parsed_param[:maxLength] = value_type[:max_length] if value_type.key?(:max_length)
           end
         end
 
@@ -211,6 +211,14 @@ module GrapeSwagger
 
         def parse_range_values(values)
           { minimum: values.begin, maximum: values.end }.compact
+        end
+
+        def parsed_param
+          Thread.current[:grape_swagger_doc_methods_parse_params_parsed_param]
+        end
+
+        def parsed_param=(parsed_param)
+          Thread.current[:grape_swagger_doc_methods_parse_params_parsed_param] = parsed_param
         end
       end
     end

@@ -14,7 +14,7 @@ require 'grape-swagger/model_parsers'
 module GrapeSwagger
   class << self
     def model_parsers
-      @model_parsers ||= GrapeSwagger::ModelParsers.new
+      Thread.current[:model_parsers] ||= GrapeSwagger::ModelParsers.new
     end
   end
   autoload :Rake, 'grape-swagger/rake/oapi_tasks'

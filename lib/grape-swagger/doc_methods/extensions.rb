@@ -5,7 +5,7 @@ module GrapeSwagger
     class Extensions
       class << self
         def add(path, definitions, route)
-          @route = route
+          Thread.current[:grape_swagger_doc_methods_extensions_route] = route
 
           description = route.settings[:description]
           add_extension_to(path[method], extension(description)) if description && extended?(description, :x)
@@ -94,7 +94,7 @@ module GrapeSwagger
           # of this class
           return super if args.size.positive?
 
-          @route.request_method.downcase.to_sym
+          Thread.current[:grape_swagger_doc_methods_extensions_route].request_method.downcase.to_sym
         end
       end
     end
