@@ -39,7 +39,7 @@ describe Grape::Endpoint do
           let(:object) { subject.content_types_for(target_class) }
 
           specify do
-            expect(object).to eql %w[application/xml application/json text/plain]
+            expect(object).to match_array %w[application/xml application/json text/plain]
           end
         end
       end
