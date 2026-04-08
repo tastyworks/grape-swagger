@@ -75,3 +75,6 @@ Style/RegexpLiteral:
 
 Style/SlicingWithRange:
   Enabled: false
+
+Style/OneClassPerFile:
+ Enabled: false
